@@ -15,7 +15,7 @@ VMs are typically referred to as **guests**, with one or more guest machines run
 VM technology includes **virtual servers**, **virtual server instances (VSIs)**, and **virtual private servers (VPSs)**.
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Frontendab/Born2beRoot/refs/heads/main/attachment/virtual_machines_diagram.webp?token=GHSAT0AAAAAADOXFRQH5DMAEI7UDSOBZ7542ISDHVQ" width="75%" height="75%" alt="Virtual machines diagram" />
+  <img src="https://raw.githubusercontent.com/Frontendab/Born2beRoot/refs/heads/main/attachment/virtual_machines_diagram.webp" width="75%" height="75%" alt="Virtual machines diagram" />
   <p><sub>🖥️ <em>Virtual Machines Diagram</em></sub></p>
 </div>
 
@@ -52,7 +52,7 @@ Depending on the hypervisor’s capabilities, you can set options such as **3D a
 > Examples: **VMware Workstation Pro** and **Oracle VirtualBox**.
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Frontendab/Born2beRoot/refs/heads/main/attachment/type2-hypervisor-diagram.webp?token=GHSAT0AAAAAADOXFRQG77OHP6K2Z2Z7XXR42ISEA6Q" width="75%" height="75%" alt="Type 2 hypervisor diagram" />
+  <img src="https://raw.githubusercontent.com/Frontendab/Born2beRoot/refs/heads/main/attachment/type2-hypervisor-diagram.webp" width="75%" height="75%" alt="Type 2 hypervisor diagram" />
   <p><sub>🧠 <em>Type 2 Hypervisor Diagram</em></sub></p>
 </div>
 
