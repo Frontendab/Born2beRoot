@@ -76,5 +76,3 @@ One of the key components of virtualization is the concept of **virtual machines
 - **Debian** is an **independent distribution** known for being **universal**, **free**, and **community-driven**.  
   It uses **DEB packages** and the **apt** package manager.  
   Debian is often used for **desktops**, **servers**, and **development**.
-
-> 💡 *This document provides a foundational understanding of virtualization, virtual machines, and hypervisors, along with a quick comparison between Rocky Linux and Debian.*
