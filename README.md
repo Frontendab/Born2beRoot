@@ -12,7 +12,7 @@ By using the resources of a single physical machine memory, CPU, network interfa
 VMs are typically referred to as guests, with one or more “guest” machines running on a physical machine called the “host” machine. VM technology includes virtual servers, virtual server instances (VSIs) and virtual private servers (VPSs).
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Frontendab/Born2beRoot/refs/heads/main/attachment/virtual_machines_diagram.webp?token=GHSAT0AAAAAADOXFRQH5DMAEI7UDSOBZ7542ISDHVQ" width="75%" height="75%" alt="virtual machines diagram" />
+  <img src="https://raw.githubusercontent.com/Frontendab/Born2beRoot/refs/heads/main/attachment/virtual_machines_diagram.webp" width="75%" height="75%" alt="virtual machines diagram" />
   <p>$${\color{gray}Virtual \space machines \space diagram}$$</p>
 </div>
 
@@ -33,7 +33,7 @@ Type 1 hypervisors run directly on the physical hardware (usually a server), rep
 Type 2 hypervisors run as applications within a host OS and usually target single-user desktop or notebook platforms. With a type 2 hypervisor, you manually create a VM and install a guest OS inside it. You can use the hypervisor to allocate physical resources to your VM, manually setting the number of processor cores and memory it can use. Depending on the hypervisor’s capabilities, you can set options such as 3D acceleration for graphics. Examples of type 2 hypervisors include VMware Workstation Pro and Oracle VirtualBox.
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Frontendab/Born2beRoot/refs/heads/main/attachment/type2-hypervisor-diagram.webp?token=GHSAT0AAAAAADOXFRQG77OHP6K2Z2Z7XXR42ISEA6Q" width="75%" height="75%" alt="Type2 hypervisor diagram" />
+  <img src="https://raw.githubusercontent.com/Frontendab/Born2beRoot/refs/heads/main/attachment/type2-hypervisor-diagram.webp" width="75%" height="75%" alt="Type2 hypervisor diagram" />
   <p>$${\color{gray}Type2 \space hypervisor \space diagram}$$</p>
 </div>
 
