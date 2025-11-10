@@ -76,3 +76,11 @@ One of the key components of virtualization is the concept of **virtual machines
 - **Debian** is an **independent distribution** known for being **universal**, **free**, and **community-driven**.  
   It uses **DEB packages** and the **apt** package manager.  
   Debian is often used for **desktops**, **servers**, and **development**.
+
+# What is AppArmor, and what's the difference between apt and apptitude?
+
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Frontendab/Born2beRoot/refs/heads/main/attachment/apt_aptitude.png" width="75%" height="75%" alt="What's the difference between apt and apptitude?" />
+  <p><sub><em>What's the difference between apt and apptitude?</em></sub></p>
+</div>
