@@ -9,7 +9,7 @@ Each VM runs its own operating system (OS) and behaves like a separate physical 
 
 A **virtual machine (VM)** is a virtual representation or emulation of a physical computer that uses **software instead of hardware** to run programs and deploy applications.
 
-By using the resources of a single physical machine — memory, CPU, network interface, and storage — VMs enable businesses to run **multiple machines virtually** (with different operating systems) on a single device.
+By using the resources of a single physical machine memory, CPU, network interface, and storage VMs enable businesses to run **multiple machines virtually** (with different operating systems) on a single device.
 
 VMs are typically referred to as **guests**, with one or more guest machines running on a physical machine called the **host**.  
 VM technology includes **virtual servers**, **virtual server instances (VSIs)**, and **virtual private servers (VPSs)**.
