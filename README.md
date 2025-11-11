@@ -2,7 +2,7 @@
 
 Virtualization is a technology that enables the creation of **virtual environments** from a single physical machine, allowing for more efficient use of resources by distributing them across computing environments.
 
-Using software, virtualization creates an **abstraction layer** over computer hardware, dividing a single system’s components — such as **processors, memory, networks, and storage** — into multiple **virtual machines (VMs)**.  
+Using software, virtualization creates an **abstraction layer** over computer hardware, dividing a single system’s components such as **processors, memory, networks, and storage** into multiple **virtual machines (VMs)**.  
 Each VM runs its own operating system (OS) and behaves like a separate physical computer, despite sharing the same underlying hardware.
 
 # 💻 What is a Virtual Machine?
@@ -21,7 +21,7 @@ VM technology includes **virtual servers**, **virtual server instances (VSIs)**,
 
 # ⚙️ How Do Virtual Machines Work?
 
-As previously explained, virtualization relies on **hypervisor technology** — a software layer placed on a physical computer or server (also known as a **bare metal server**) that allows the system to separate its operating system and applications from its hardware.
+As previously explained, virtualization relies on **hypervisor technology** a software layer placed on a physical computer or server (also known as a **bare metal server**) that allows the system to separate its operating system and applications from its hardware.
 
 These virtual machines can run their own OS and applications **independently** while still sharing the original resources (e.g., memory, RAM, storage) from the server, which the hypervisor manages.  
 The hypervisor acts like a **traffic controller**, allocating resources to virtual machines and ensuring they don’t disrupt each other.
@@ -37,7 +37,7 @@ Type 1 hypervisors run **directly on the physical hardware** (usually a server),
 Typically, you use a separate software product to create and manipulate VMs on the hypervisor.
 
 Some management tools, such as **VMware vSphere**, let you select a guest OS to install in the VM. You can use one VM as a **template** for others and duplicate it to create new ones.  
-Depending on your needs, you might create multiple VM templates for different purposes — such as **software testing**, **production databases**, or **development environments**.
+Depending on your needs, you might create multiple VM templates for different purposes such as **software testing**, **production databases**, or **development environments**.
 
 > Example: **KVM (Kernel-based Virtual Machine)** is a Type 1 hypervisor.
 
@@ -59,7 +59,7 @@ Depending on the hypervisor’s capabilities, you can set options such as **3D a
 # 🎯 The Purpose of Virtual Machines
 
 Virtualization technology has revolutionized the way we deploy and manage computer systems.  
-One of the key components of virtualization is the concept of **virtual machines (VMs)** — software-based emulations of physical computers capable of running their own OS and applications.
+One of the key components of virtualization is the concept of **virtual machines (VMs)** software-based emulations of physical computers capable of running their own OS and applications.
 
 **The primary purpose** of virtual machines is to:
 
