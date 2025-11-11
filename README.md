@@ -293,3 +293,238 @@ flowchart TD
 
 * One disk can have multiple partitions.
 * Each partition can have a separate purpose (OS, user data, swap, backup).
+
+# How to View the Partitions of the Machine
+
+You can view all the **partitions and disks** on your system using different **Linux commands** or tools.
+These show details like disk size, partition type, mount points, and file systems.
+
+#### 🧭 1. Using `lsblk` (Recommended)
+
+```bash
+lsblk
+```
+
+**Description:**
+
+* Lists all block devices (disks and partitions) in a **tree view**.
+* Shows device names, sizes, and mount points.
+
+**Example Output:**
+
+```
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda      8:0    0  100G  0 disk
+├─sda1   8:1    0   50G  0 part /
+├─sda2   8:2    0   45G  0 part /home
+└─sda3   8:3    0    5G  0 part [SWAP]
+```
+
+#### 🧩 2. Using `fdisk`
+
+```bash
+sudo fdisk -l
+```
+
+**Description:**
+
+* Displays **detailed information** about all disks and partitions (size, type, filesystem).
+* Requires root privileges.
+
+**Example Output:**
+
+```
+Device     Boot   Start      End  Sectors  Size Id Type
+/dev/sda1  *       2048 1026047  1024000  500M 83 Linux
+/dev/sda2       1026048 2097151  1071104  524M 82 Linux swap
+```
+
+#### 🧱 3. Using `parted`
+
+```bash
+sudo parted -l
+```
+
+**Description:**
+
+* Lists partitions and details like partition table type (GPT/MBR).
+* Useful for working with large modern disks.
+
+#### 📊 4. Using `df -h`
+
+```bash
+df -h
+```
+
+**Description:**
+
+* Shows **mounted partitions**, their usage, and available space in human-readable form.
+
+**Example Output:**
+
+```
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        50G   20G   30G  40% /
+/dev/sda2        45G   10G   35G  22% /home
+```
+
+### 🧠 Summary
+
+| Command     | Purpose                             | Needs Root? | Notes             |
+| ----------- | ----------------------------------- | ----------- | ----------------- |
+| `lsblk`     | Show disks & partitions (tree view) | No          | Most common       |
+| `fdisk -l`  | Detailed partition info             | ✅ Yes       | Classic tool      |
+| `parted -l` | GPT/MBR details                     | ✅ Yes       | For modern setups |
+| `df -h`     | Mounted partitions & usage          | No          | Shows disk usage  |
+
+# What Are Primary and Logical Partitions?
+
+A **partition** is a section of your physical storage device (like `/dev/sda`) that acts as a separate “container” for data or an operating system.
+There are **two main types** of partitions in traditional **MBR (Master Boot Record)** partitioning: **Primary** and **Logical**.
+
+### 🧩 Primary Partition
+
+* A **primary partition** is one of the **main partitions** on a disk.
+* The **MBR partition table supports up to 4 primary partitions** only.
+* One of these primary partitions can be marked as **active (bootable)** — that’s where the operating system usually starts from.
+* You **cannot create more than 4 primary partitions** on an MBR disk.
+
+**Example:**
+`/dev/sda1`, `/dev/sda2`, `/dev/sda3`, `/dev/sda4`
+
+### 🧱 Logical Partition
+
+* A **logical partition** exists **inside an extended partition** (a special type of primary partition).
+* Used to **bypass the 4-partition limit** of MBR.
+* You can create **many logical partitions** (like `/dev/sda5`, `/dev/sda6`, etc.).
+* Logical partitions are mainly used for **data storage**, **swap**, or **extra OS installations**.
+
+**Example:**
+
+* `/dev/sda1` – Primary (OS)
+* `/dev/sda2` – Extended
+
+  * `/dev/sda5` – Logical
+  * `/dev/sda6` – Logical
+
+### ⚖️ Differences Between Primary and Logical Partitions
+
+| Feature                  | **Primary Partition**           | **Logical Partition**                    |
+| ------------------------ | ------------------------------- | ---------------------------------------- |
+| **Maximum Number (MBR)** | Up to 4                         | Unlimited (inside an extended partition) |
+| **Bootable**             | Yes (one can be active)         | No (cannot boot directly)                |
+| **Location**             | Created directly on disk        | Inside an extended partition             |
+| **Typical Use**          | Operating system or boot loader | Extra storage, swap, or additional OS    |
+| **Partition Names**      | `/dev/sda1` to `/dev/sda4`      | `/dev/sda5` and above                    |
+
+### 🧠 Modern Note
+
+With modern **GPT (GUID Partition Table)** systems (used by UEFI), the limitation of 4 primary partitions no longer exists —
+you can create **up to 128 partitions** directly, and the concept of “logical” partitions is obsolete.
+
+```mermaid
+flowchart TD
+    subgraph Disk["Physical Disk(/dev/sda)"]
+        A["Primary Partition 1<br>(/dev/sda1)"]
+        B["Primary Partition 2<br>(/dev/sda2)"]
+        C["Primary Partition 3<br>(/dev/sda3)"]
+        subgraph D["Extended Partition<br>(/dev/sda4)"]
+            E["Logical Partition 1<br>(/dev/sda5)"]
+            F["Logical Partition 2<br>(/dev/sda6)"]
+        end
+    end
+```
+
+**Explanation:**
+
+* The disk can have up to 4 primary partitions.
+* If you need more, one primary is turned into an **extended partition** containing multiple **logical partitions**.
+
+# How LVM works and what it is all about?
+
+### 🧱 What is LVM?
+
+**LVM** stands for **Logical Volume Manager**.
+It’s a system for managing disk storage in a **flexible and powerful** way — better than traditional fixed partitions.
+
+Instead of dividing a disk into rigid partitions, LVM allows you to create **logical volumes** that can be **resized, moved, or combined** easily — even while the system is running.
+
+### ⚙️ How LVM Works
+
+LVM introduces **three main layers**:
+
+1. **Physical Volumes (PVs):**
+
+   * These are the actual physical storage devices — like `/dev/sda1`, `/dev/sdb1`, etc.
+   * Each PV is initialized with LVM to be used in a volume group.
+
+2. **Volume Groups (VGs):**
+
+   * A volume group is a **pool of storage** created by combining one or more physical volumes.
+   * Think of it like a big container made up of multiple disks.
+
+3. **Logical Volumes (LVs):**
+
+   * From the volume group, you create **logical volumes**, which act like virtual partitions.
+   * You can format them with a filesystem and mount them like normal disks (e.g., `/home`, `/var`).
+
+### 🧩 Example Workflow
+
+1. You have two disks: `/dev/sda1` and `/dev/sdb1`
+2. You convert them into **Physical Volumes (PVs)** using:
+
+   ```bash
+   sudo pvcreate /dev/sda1 /dev/sdb1
+   ```
+3. Combine them into a **Volume Group (VG)**:
+
+   ```bash
+   sudo vgcreate vg_data /dev/sda1 /dev/sdb1
+   ```
+4. Create a **Logical Volume (LV)** inside that VG:
+
+   ```bash
+   sudo lvcreate -L 50G -n lv_storage vg_data
+   ```
+5. Format and mount it:
+
+   ```bash
+   sudo mkfs.ext4 /dev/vg_data/lv_storage
+   sudo mount /dev/vg_data/lv_storage /mnt/storage
+   ```
+
+✅ Now you have one big flexible “virtual disk” that spans multiple physical drives.
+
+### 🪄 Advantages of LVM
+
+| Feature                | Description                                         |
+| ---------------------- | --------------------------------------------------- |
+| **Flexibility**        | Resize logical volumes easily (extend or shrink).   |
+| **Scalability**        | Combine multiple disks into one large storage pool. |
+| **Snapshots**          | Create instant backups of live systems.             |
+| **Dynamic Management** | Add or remove physical disks without downtime.      |
+
+```mermaid
+flowchart TD
+    subgraph PV["Physical Volumes (PVs)"]
+        A[/dev/sda1/]
+        B[/dev/sdb1/]
+    end
+
+    subgraph VG["Volume Group (VG)"]
+        A & B --> C["Storage Pool"]
+    end
+
+    subgraph LV["Logical Volumes (LVs)"]
+        C --> D["LV1 (/home)"]
+        C --> E["LV2 (/var)"]
+        C --> F["LV3 (/swap)"]
+    end
+```
+
+**Explanation:**
+
+* Physical volumes (`/dev/sda1`, `/dev/sdb1`) form the base.
+* They are grouped into a **Volume Group (VG)**, which acts as a big storage pool.
+* From this pool, you create **Logical Volumes (LVs)** that behave like partitions.
+
