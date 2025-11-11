@@ -365,7 +365,7 @@ df -h
 ```
 Filesystem      Size  Used Avail Use% Mounted on
 /dev/sda1        50G   20G   30G  40% /
-/dev/sda2        45G   10G   35G  22% /home
+/dev/sda2        45G   10G   35G  4242% /home
 ```
 
 ### 🧠 Summary
@@ -527,4 +527,893 @@ flowchart TD
 * Physical volumes (`/dev/sda1`, `/dev/sdb1`) form the base.
 * They are grouped into a **Volume Group (VG)**, which acts as a big storage pool.
 * From this pool, you create **Logical Volumes (LVs)** that behave like partitions.
+
+# What is Sudo, why use it and how to set up it's strict rules?
+
+### 🔒 What is `sudo`?
+
+`sudo` stands for **“superuser do”**.
+It’s a **Linux command** that allows permitted users to **run commands with elevated (root) privileges** — without logging in as the root user directly.
+
+This means you can perform administrative tasks (like installing software, editing system files, or managing users) securely, while keeping root access **controlled and logged**.
+
+### ⚙️ Why Use `sudo`?
+
+| Reason                   | Description                                                                        |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| **Security**             | Users don’t need to log in as `root`; limits risk if their account is compromised. |
+| **Accountability**       | Every `sudo` command is logged (who ran it, when, and what).                       |
+| **Granular Control**     | Admins can allow specific commands for specific users.                             |
+| **Temporary Privileges** | Users gain root access only for a short moment — not permanently.                  |
+
+Example:
+
+```bash
+sudo apt update
+sudo systemctl restart ssh
+```
+
+### 🧠 How `sudo` Works
+
+When you use `sudo`, the system checks a configuration file called `/etc/sudoers`.
+That file defines:
+
+* Which users can use `sudo`
+* Which commands they can execute
+* Whether a password is required
+
+### 🛠️ How to Set Up Strict `sudo` Rules
+
+You can safely edit the `sudo` rules using:
+
+```bash
+sudo visudo
+```
+
+This opens `/etc/sudoers` in a secure editor and checks for syntax errors before saving.
+
+#### Example: Restrict sudo usage
+
+```bash
+# Only allow user 'ayoub' to run specific commands without full root access
+ayoub ALL=(ALL:ALL) /usr/bin/apt, /bin/systemctl
+```
+
+✅ **Explanation:**
+
+* `ayoub`: username
+* `ALL`: applies to all hosts
+* `(ALL:ALL)`: can run commands as any user/group
+* The list (`/usr/bin/apt`, `/bin/systemctl`) are the **only** allowed commands
+
+#### Example: Force Password Every Time
+
+To make `sudo` ask for a password **every time**:
+
+```bash
+Defaults timestamp_timeout=0
+```
+
+#### Example: Disable Root Login
+
+To encourage using `sudo` instead of logging in as root:
+
+```bash
+sudo passwd -l root
+```
+
+### 🧱 Diagram — How `sudo` Works
+
+```mermaid
+flowchart TD
+    U[Normal User] -->|sudo command| S[sudo]
+    S -->|Check permissions| C[/etc/sudoers/]
+    C -->|Allowed| R[root privileges]
+    C -->|Denied| D[Access Denied]
+    R -->|Execute command| CMD[Run as root]
+```
+
+**In summary:**
+
+* `sudo` gives **temporary root powers safely**.
+* `/etc/sudoers` defines **who can do what**.
+* Setting strict rules increases **security and control**.
+
+# 👤 How to Create a User and Change Its Password
+
+In Linux, user management is an essential part of system administration.
+Creating and managing users ensures that each person or service has its own **account, permissions, and security boundaries**.
+
+### 🧩 1. Create a New User
+
+To create a new user, use the `adduser` or `useradd` command.
+
+#### ✅ Recommended Command:
+
+```bash
+sudo adduser username
+```
+
+**Explanation:**
+
+* `adduser` automatically:
+
+  * Creates the user account
+  * Creates a home directory (e.g., `/home/username`)
+  * Sets default permissions
+  * Prompts you to set a password
+
+💡 Example:
+
+```bash
+sudo adduser ayoub
+```
+
+This will:
+
+* Create the user **ayoub**
+* Create `/home/ayoub`
+* Set ownership and permissions
+* Ask for a password and optional info (full name, phone, etc.)
+
+### 🧠 Alternative: Using `useradd`
+
+`useradd` is a lower-level command — it needs extra flags:
+
+```bash
+sudo useradd -m -s /bin/bash username
+```
+
+* `-m`: create home directory
+* `-s /bin/bash`: set default shell
+
+Then set the password:
+
+```bash
+sudo passwd username
+```
+
+Example:
+
+```bash
+sudo useradd -m -s /bin/bash ayoub
+sudo passwd ayoub
+```
+
+### 🔑 2. Change a User’s Password
+
+If you want to **change an existing user’s password**, use:
+
+```bash
+sudo passwd username
+```
+
+You’ll be prompted to enter and confirm the new password.
+
+💡 Example:
+
+```bash
+sudo passwd ayoub
+```
+
+### ⚙️ 3. Force Password Change at Next Login
+
+For security, you can require the user to change their password at their next login:
+
+```bash
+sudo passwd -e username
+```
+
+### 🧱 Diagram — User Creation Process
+
+```mermaid
+flowchart TD
+    A[Administrator] -->|sudo adduser username| B[System]
+    B --> C[Create Home Directory<br>/home/username]
+    B --> D[Set User Permissions<br>and Shell]
+    B --> E[Prompt for Password]
+    E --> F[User Account Ready to Use]
+```
+
+**In summary:**
+
+* Use `adduser` for an easier setup (recommended).
+* Use `passwd` to create or change passwords.
+* Always manage users with `sudo` for proper permissions.
+
+# 👥 How to Create a Group and Assign Users to It
+
+In Linux, **groups** are used to manage **permissions and access control** for multiple users efficiently.
+By assigning users to specific groups, you can easily control who can read, write, or execute certain files or commands.
+
+### 🧩 1. Create a New Group
+
+To create a new group, use the `groupadd` command:
+
+```bash
+sudo groupadd groupname
+```
+
+💡 Example:
+
+```bash
+sudo groupadd developers
+```
+
+This creates a new group called **developers**.
+
+### 👤 2. Add a User to a Group
+
+You can assign users to groups in several ways:
+
+#### ✅ Add an Existing User to an Existing Group:
+
+```bash
+sudo usermod -aG groupname username
+```
+
+* `-aG`: *append* the user to the specified group (don’t forget `-a`)
+
+💡 Example:
+
+```bash
+sudo usermod -aG developers ayoub
+```
+
+➡️ This adds user **ayoub** to the **developers** group.
+
+#### 🆕 Create a User and Add Them to a Group at the Same Time:
+
+```bash
+sudo adduser username groupname
+```
+
+💡 Example:
+
+```bash
+sudo adduser other_user developers
+```
+
+This creates a new user **other_user** and directly adds her to the **developers** group.
+
+---
+
+### 🔍 3. Display All Groups and Users
+
+To list all groups on the system:
+
+```bash
+getent group
+```
+
+To list all users on the system:
+
+```bash
+getent passwd
+```
+
+💡 Tip: You can also view groups of the current user with:
+
+```bash
+groups
+```
+
+### 🧠 4. Remove a User from a Group
+
+If you want to remove a user from a group:
+
+```bash
+sudo gpasswd -d username groupname
+```
+
+💡 Example:
+
+```bash
+sudo gpasswd -d ayoub developers
+```
+
+### 🧱 Diagram — User and Group Relationship
+
+```mermaid
+graph TD
+    A[ayoub] --> G1[developers]
+    B[other_user] --> G1
+    C[admin] --> G2[sudo]
+    G1 -->|Access shared files| F[/project folder/]
+```
+
+**Explanation:**
+
+* Users `ayoub` and `other_user` are members of the `developers` group.
+* The `admin` user is part of the `sudo` group.
+* The `developers` group grants access to shared resources.
+
+### ✅ Summary
+
+| Command                               | Description                           |
+| ------------------------------------- | ------------------------------------- |
+| `sudo groupadd groupname`             | Create a new group                    |
+| `sudo adduser username groupname`     | Create a user and add them to a group |
+| `sudo usermod -aG groupname username` | Add an existing user to a group       |
+| `sudo gpasswd -d username groupname`  | Remove a user from a group            |
+| `groups username`                     | Check which groups a user belongs to  |
+| `getent group`                        | Display all groups on the system      |
+| `getent passwd`                       | Display all users on the system       |
+
+# 🧾 How to Print the Groups a User Is In
+
+To display all the groups a specific user belongs to, use one of the following commands:
+
+| Command           | Description                                                           |
+| ----------------- | --------------------------------------------------------------------- |
+| `groups username` | Shows all groups that the specified user is a member of               |
+| `id username`     | Displays the user ID (UID), group ID (GID), and all group memberships |
+| `groups`          | Shows the groups of the **current logged-in user**                    |
+
+💡 **Example:**
+
+```bash
+groups ayoub
+```
+
+**Output:**
+
+```
+ayoub : ayoub developers sudo
+```
+
+✅ This means user **ayoub** belongs to the groups **ayoub**, **developers**, and **sudo**.
+
+# 🖥️ How to Change the Hostname of the Machine
+
+The **hostname** is the name that identifies your computer on a network. Changing it can help with **network management, identification, and clarity**.
+
+### 1️⃣ View Current Hostname
+
+```bash
+hostname
+```
+
+or
+
+```bash
+hostnamectl
+```
+
+**Example Output:**
+
+```
+myserver
+```
+
+### 2️⃣ Temporary Change (Until Reboot)
+
+To change the hostname **temporarily** (resets after reboot):
+
+```bash
+sudo hostname new-hostname
+```
+
+💡 Example:
+
+```bash
+sudo hostname myserver01
+```
+
+* Works immediately but **does not persist** after a reboot.
+
+### 3️⃣ Permanent Change (Persistent Across Reboots)
+
+#### Using `hostnamectl` (Recommended on modern systems)
+
+```bash
+sudo hostnamectl set-hostname new-hostname
+```
+
+💡 Example:
+
+```bash
+sudo hostnamectl set-hostname myserver01
+```
+
+* This updates the **system hostname** permanently.
+* To verify:
+
+```bash
+hostnamectl
+```
+
+#### Optional: Update `/etc/hosts` File
+
+Edit `/etc/hosts` to reflect the new hostname:
+
+```bash
+sudo nano /etc/hosts
+```
+
+Replace the old hostname with the new one in lines like:
+
+```
+127.0.1.1    old-hostname
+```
+
+Save the file.
+
+### 4️⃣ Reboot (Optional)
+
+Usually, `hostnamectl` is enough, but you can reboot to ensure all services recognize the new hostname:
+
+```bash
+sudo reboot
+```
+
+### 🧱 Summary Table
+
+| Action                | Command                                  | Notes                          |
+| --------------------- | ---------------------------------------- | ------------------------------ |
+| View current hostname | `hostname` or `hostnamectl`              | Displays the machine’s name    |
+| Temporary change      | `sudo hostname new-name`                 | Resets after reboot            |
+| Permanent change      | `sudo hostnamectl set-hostname new-name` | Persists across reboots        |
+| Update hosts file     | Edit `/etc/hosts`                        | Ensures proper name resolution |
+
+```mermaid
+flowchart TD
+    U[User] -->|Run hostname command| C[System Command]
+    C -->|Temporary Change| T[Kernel updates hostname<br>in memory]
+    C -->|Permanent Change| F[hostnamectl updates<br>/etc/hostname]
+    F --> H[System Services read<br>new hostname]
+    T --> H
+    H --> V[Hostname applied on<br>network & local system]
+```
+
+**Explanation:**
+
+* The **user** issues a command (`hostname` or `hostnamectl`).
+* **Temporary change:** Kernel updates hostname in memory (lost after reboot).
+* **Permanent change:** `hostnamectl` updates `/etc/hostname`, affecting services permanently.
+* **Services** read the new hostname so it’s applied across the system and network.
+
+Perfect! Let’s make a **README.md–ready guide** on **creating and setting up a server** in Linux **without going into SSH, firewall, or cron**, since those will be covered later.
+
+# 🖥️ How to Create and Set Up a Server
+
+Setting up a server means preparing a machine (physical or virtual) to **host services, applications, or websites**. This includes installing the OS, configuring essential software, and organizing storage and users.
+
+### 1️⃣ Install the Operating System
+
+1. **Choose a Linux distribution** (Debian, Rocky Linux, Ubuntu Server, etc.).
+2. Install it on a **physical server or VM**.
+
+   * Follow the OS installer instructions.
+   * Create a **root/admin user** during installation.
+   * Optionally, set up **partitions or LVM** for flexible storage.
+
+### 2️⃣ Update the System
+
+Keep your server up to date to ensure **security and stability**:
+
+```bash
+sudo apt update && sudo apt upgrade -y   # Debian/Ubuntu
+sudo dnf update -y                       # Rocky Linux/CentOS
+```
+
+### 3️⃣ Set the Hostname
+
+Give your server a **unique name** for identification on the network:
+
+```bash
+sudo hostnamectl set-hostname myserver01
+```
+
+### 4️⃣ Create Users and Groups
+
+* Avoid using the root account directly.
+* Create administrative and regular users:
+
+```bash
+sudo adduser adminuser
+sudo usermod -aG sudo adminuser       # Debian/Ubuntu
+sudo usermod -aG wheel adminuser      # RHEL/Rocky
+```
+
+* Organize users into groups for better **permission management**.
+
+### 5️⃣ Configure Storage
+
+* Check your **partitions**:
+
+```bash
+lsblk
+```
+
+* Create or mount directories for services or data:
+
+```bash
+sudo mkdir /srv/www
+sudo chown adminuser:developers /srv/www
+```
+
+* Optionally, use **LVM** to create flexible storage volumes.
+
+### 6️⃣ Install Basic Services
+
+Depending on your server purpose, install essential services:
+
+```bash
+sudo apt install lighttpd mariadb-server php -y   # Web server example (Debian/Ubuntu)
+sudo dnf install lighttpd mariadb-server php -y   # Rocky Linux example
+```
+
+* Organize service configuration under `/etc/` (e.g., `/etc/lighttpd/`, `/etc/mysql/`).
+* Start and enable services:
+
+```bash
+sudo systemctl start lighttpd
+sudo systemctl enable lighttpd
+```
+
+### 7️⃣ Verify Setup
+
+* Check installed services:
+
+```bash
+systemctl status lighttpd
+systemctl status mariadb
+```
+
+* Verify directories and permissions:
+
+```bash
+ls -l /srv/
+```
+
+### 🧱 Mermaid Diagram — Server Setup Workflow
+
+```mermaid
+flowchart TD
+    A[Install OS] --> B[Update System]
+    B --> C[Set Hostname]
+    C --> D[Create Users & Groups]
+    D --> E[Configure Storage<br>& Directories]
+    E --> F[Install Basic Services]
+    F --> G[Start & Verify Services]
+```
+
+**Explanation:**
+
+* Each step builds on the previous.
+* After completion, the server is **ready to host applications or websites**.
+* Later, you can secure it with **SSH, firewall, and schedule tasks with cron**.
+
+# What is SSH, how it works and how to set it up?
+
+### 🔒 What is SSH?
+
+**SSH (Secure Shell)** is a protocol used to **securely connect to a remote machine** over a network.
+It allows users to **access and manage servers remotely**, transfer files, and execute commands safely.
+
+**Key Features:**
+
+* Encrypted communication (protects against eavesdropping)
+* Authentication using passwords or **SSH keys**
+* Remote command execution
+* Secure file transfer using `scp` or `sftp`
+
+### ⚙️ How SSH Works
+
+1. **Client-Server Model:**
+
+   * The user runs an **SSH client** on their local machine.
+   * The remote server runs an **SSH server** (`sshd`).
+
+2. **Connection Establishment:**
+
+   * The client sends a connection request to the server.
+   * The server responds with its **public key** for encryption.
+
+3. **Authentication:**
+
+   * The client authenticates using a **password** or **SSH key pair**.
+
+4. **Encrypted Communication:**
+
+   * All commands, file transfers, and data are **encrypted** to ensure privacy and security.
+
+### 🛠️ How to Set Up SSH
+
+#### 1️⃣ Install the SSH Server
+
+**Debian/Ubuntu:**
+
+```bash
+sudo apt update
+sudo apt install openssh-server -y
+```
+
+**Rocky Linux/CentOS:**
+
+```bash
+sudo dnf install openssh-server -y
+```
+
+#### 2️⃣ Start and Enable SSH Service
+
+```bash
+sudo systemctl start ssh      # Ubuntu/Debian
+sudo systemctl enable ssh
+sudo systemctl status ssh
+```
+
+On Rocky Linux/CentOS:
+
+```bash
+sudo systemctl start sshd
+sudo systemctl enable sshd
+sudo systemctl status sshd
+```
+
+#### 3️⃣ Connect to a Remote Server
+
+From the client machine:
+
+```bash
+ssh username@server_ip
+```
+
+**Example:**
+
+```bash
+ssh ayoub@192.168.1.10
+```
+
+* First connection will prompt to **accept the server’s fingerprint**.
+* Enter your **password** or use **SSH keys** for passwordless login.
+
+#### 4️⃣ (Optional) Configure SSH for Security
+
+Edit the SSH configuration file:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Some common settings:
+
+* Change default port:
+
+```
+Port 4242
+```
+
+* Disable root login:
+
+```
+PermitRootLogin no
+```
+
+* Allow only certain users:
+
+```
+AllowUsers ayoub adminuser
+```
+
+Restart SSH after changes:
+
+```bash
+sudo systemctl restart ssh   # or sshd
+```
+
+### 🧱 Diagram — How SSH Works
+
+```mermaid
+flowchart TD
+    C[Client Machine] -->|SSH request| S[SSH Server]
+    S -->|Send public key| C
+    C -->|"Authenticate<br>(password/SSH key)"| S
+    S -->|Encrypted channel<br>established| C
+    C -->|Execute commands<br>/ Transfer files| S
+```
+
+**Explanation:**
+
+* The **client** initiates a connection to the server.
+* **Authentication** ensures only authorized users can connect.
+* All communication is **encrypted**, keeping commands and data secure.
+
+# What is UFW, how it works and how to set it up?
+
+### 🔥 What is UFW?
+
+**UFW (Uncomplicated Firewall)** is a **user-friendly frontend for managing Linux firewall rules**.
+It is designed to **simplify the process of configuring iptables** and securing your server from unauthorized access.
+
+**Key Features:**
+
+* Easy command-line interface
+* Enable/disable firewall quickly
+* Define rules for **allowing or blocking traffic** by ports, services, or IP addresses
+* Works well with IPv4 and IPv6
+
+### ⚙️ How UFW Works
+
+1. **Firewall Rules:**
+
+   * UFW uses **allow** and **deny rules** to control incoming and outgoing traffic.
+
+2. **Profiles & Ports:**
+
+   * Rules can apply to **specific ports** (like 4242 for SSH) or **services** (like HTTP/HTTPS).
+
+3. **Default Policies:**
+
+   * By default, UFW **blocks all incoming traffic** and **allows outgoing traffic** unless specified otherwise.
+
+4. **Activation:**
+
+   * Once rules are defined, UFW enforces them, protecting your server from unwanted access.
+
+### 🛠️ How to Set Up UFW
+
+#### 1️⃣ Install UFW (if not already installed)
+
+**Debian/Ubuntu:**
+
+```bash
+sudo apt update
+sudo apt install ufw -y
+```
+
+**Rocky Linux/CentOS (uses `firewalld` by default, but UFW can be installed):**
+
+```bash
+sudo dnf install ufw -y
+```
+
+#### 2️⃣ Check UFW Status
+
+```bash
+sudo ufw status verbose
+```
+
+* Displays if UFW is active and current rules.
+
+#### 3️⃣ Set Default Policies
+
+```bash
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+```
+
+* Blocks all incoming connections by default
+* Allows outgoing connections
+
+#### 4️⃣ Allow Essential Services
+
+Allow traffic for common services like SSH, HTTP, and HTTPS:
+
+```bash
+sudo ufw allow 4242      # SSH
+sudo ufw allow 80      # HTTP
+sudo ufw allow 443     # HTTPS
+```
+
+💡 Tip: You can also allow by service name:
+
+```bash
+sudo ufw allow OpenSSH
+```
+
+#### 5️⃣ Enable UFW
+
+```bash
+sudo ufw enable
+```
+
+* Activates the firewall
+* All defined rules are enforced
+
+#### 6️⃣ Manage Rules
+
+* Delete a rule:
+
+```bash
+sudo ufw delete allow 4242
+```
+
+* Deny a port:
+
+```bash
+sudo ufw deny 8080
+```
+
+* Reset all rules:
+
+```bash
+sudo ufw reset
+```
+
+### 🧱 Mermaid Diagram — How UFW Works
+
+```mermaid
+flowchart TD
+    IN[Incoming Traffic] -->|Check UFW Rules| F[UFW Firewall]
+    F -->|Allowed by rules| S[Server]
+    F -->|Blocked by rules| D[Drop Traffic]
+    OUT[Outgoing Traffic] -->|Default allow| S
+```
+
+**Explanation:**
+
+* Incoming traffic is checked against **UFW rules**.
+* Allowed traffic reaches the server; blocked traffic is dropped.
+* Outgoing traffic is typically allowed by default.
+
+# ⏰ What is Cron?
+
+**Cron** is a **time-based job scheduler** in Linux and Unix-like systems.
+It allows users and administrators to **automatically run commands or scripts at specified times or intervals** without manual intervention.
+
+**Common Uses:**
+
+* Automating system maintenance tasks (like backups, updates, or log rotation)
+* Running scripts at regular intervals (daily, weekly, monthly)
+* Scheduling repetitive administrative tasks
+
+### ⚙️ How Cron Works
+
+1. **Cron Daemon (`crond`)**:
+
+   * A background service that constantly runs on the system.
+   * Checks for scheduled jobs and executes them at the correct time.
+
+2. **Crontab (Cron Table)**:
+
+   * Each user can have a **crontab file** that contains their scheduled jobs.
+   * System-wide cron jobs are usually stored in `/etc/crontab` or `/etc/cron.*` directories.
+
+3. **Job Schedule Syntax:**
+   Cron jobs are defined using five time fields plus the command:
+
+```
+* * * * * command_to_run
+│ │ │ │ │
+│ │ │ │ └─ Day of the week (0-7, Sunday=0 or 7)
+│ │ │ └── Month (1-12)
+│ │ └─── Day of the month (1-31)
+│ └──── Hour (0-23)
+└───── Minute (0-59)
+```
+
+**Example:**
+Run a backup script every day at 2:30 AM:
+
+```bash
+30 2 * * * /home/ayoub/backup.sh
+```
+
+### 🧱 Key Points About Cron
+
+| Feature            | Description                                                                        |
+| ------------------ | ---------------------------------------------------------------------------------- |
+| **Daemon**         | `crond` runs in the background and executes scheduled jobs                         |
+| **User crontab**   | Each user has their own crontab (`crontab -e`)                                     |
+| **System crontab** | Located at `/etc/crontab`, can schedule system-level jobs                          |
+| **Directories**    | `/etc/cron.daily`, `/etc/cron.hourly`, `/etc/cron.weekly` for predefined schedules |
+| **Logging**        | Cron logs activity in `/var/log/cron` or `/var/log/syslog` (depending on distro)   |
+
+### 🧱 Diagram — How Cron Works
+
+```mermaid
+flowchart TD
+    S["Cron Daemon (crond)"] -->|Check schedule| C["User Crontab / System Crontab"]
+    C -->|"Match current time"| J[Execute Job]
+    J --> R["Run Command<br>/ Script"]
+    S -->|Loop every minute| S
+```
+
+**Explanation:**
+
+* The **cron daemon** continuously checks user and system crontabs.
+* When a job’s schedule matches the current time, it is executed automatically.
+* Jobs can run scripts, commands, or system maintenance tasks.
 
