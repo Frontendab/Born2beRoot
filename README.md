@@ -1,3 +1,23 @@
+# 🖥️ Born2beRoot
+
+> Because managing a server is more than just typing commands 😉
+
+## 📘 Introduction
+
+The **Born2beRoot** project is about **setting up and configuring a Linux server from scratch**.
+It teaches you how to manage **users, groups, partitions, services, and essential system tools** while understanding **Linux internals**.
+
+Once completed, you’ll have a fully functional server ready to host applications or services —
+and you’ll gain a deep understanding of **Linux system administration and server management**.
+
+## 🧠 Purpose
+
+* Learn to **create and manage users and groups** efficiently.
+* Understand **partitions, logical volumes (LVM), and storage management**.
+* Configure **essential services** like web servers, databases, and PHP.
+* Master **security tools** like SSH, UFW, and cron scheduling.
+* Build a **robust, flexible server environment** ready for production or personal projects.
+
 # 🧩 What is Virtualization?
 
 Virtualization is a technology that allows you to create virtual versions of computer resources such as servers, operating systems, storage devices, or networks all running on a single physical machine.
@@ -1417,3 +1437,18 @@ flowchart TD
 * When a job’s schedule matches the current time, it is executed automatically.
 * Jobs can run scripts, commands, or system maintenance tasks.
 
+## 🧑‍💻 Author
+
+**Ayoub Sadouri**
+
+42 Network – **Born2beRoot Project**
+
+> "A well-configured server isn’t just about running services it’s about reliability, security, and efficiency."
+
+## 📬 Contact
+
+If you’re passionate about **building secure servers, managing Linux systems, or deploying scalable applications**, let’s connect and collaborate!
+
+🌐 [https://ayoubsadouri.com](https://ayoubsadouri.com)
+
+⭐ **Don’t forget to star this repo** if you find it helpful it really motivates me to keep creating guides and tutorials!
