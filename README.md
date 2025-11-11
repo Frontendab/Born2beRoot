@@ -36,7 +36,7 @@ VMs are created using **virtualization software** (like VirtualBox, VMware, or K
 
 > Example: If your physical machine runs Linux, you can create a VM that runs Windows or another Linux version, without affecting the host system.
 
-```
+```mermaid
 flowchart TD
     subgraph Physical_Host["Computer / Hardware"]
         A[CPU]
@@ -93,7 +93,7 @@ A **Virtual Machine (VM)** is a software-based computer that behaves like a real
 
 > **Key Idea:** The VM **acts like a real computer**, but the physical resources are shared and controlled by the hypervisor.
 
-```
+```mermaid
 flowchart TD
     subgraph Physical Host
         A[CPU] 
@@ -163,7 +163,7 @@ A **Virtual Machine (VM)** is created to provide a **flexible, isolated, and eff
 
 ### Purpose of VMs
 
-```
+```mermaid
 flowchart TD
     A[Virtual Machine] --> B[Efficient Resource Use]
     A --> C[Isolation & Security]
@@ -301,7 +301,7 @@ Partitions can be created during OS installation or on an existing disk using to
 
 Add to `/etc/fstab` to mount automatically at boot.
 
-```
+```mermaid
 flowchart TD
     A[Physical Disk] --> B["Partition 1: OS (/)"]
     A --> C["Partition 2: Home (/home)"]
@@ -442,7 +442,7 @@ There are **two main types** of partitions in traditional **MBR (Master Boot Rec
 With modern **GPT (GUID Partition Table)** systems (used by UEFI), the limitation of 4 primary partitions no longer exists —
 you can create **up to 128 partitions** directly, and the concept of “logical” partitions is obsolete.
 
-```
+```mermaid
 flowchart TD
     subgraph Disk["Physical Disk(/dev/sda)"]
         A["Primary Partition 1<br>(/dev/sda1)"]
@@ -524,7 +524,7 @@ LVM introduces **three main layers**:
 | **Snapshots**          | Create instant backups of live systems.             |
 | **Dynamic Management** | Add or remove physical disks without downtime.      |
 
-```
+```mermaid
 flowchart TD
     subgraph PV["Physical Volumes (PVs)"]
         A[/dev/sda1/]
@@ -624,7 +624,7 @@ sudo passwd -l root
 
 ### 🧱 Diagram — How `sudo` Works
 
-```
+```mermaid
 flowchart TD
     U[Normal User] -->|sudo command| S[sudo]
     S -->|Check permissions| C[/etc/sudoers/]
@@ -726,7 +726,7 @@ sudo passwd -e username
 
 ### 🧱 Diagram — User Creation Process
 
-```
+```mermaid
 flowchart TD
     A[Administrator] -->|sudo adduser username| B[System]
     B --> C[Create Home Directory<br>/home/username]
@@ -976,7 +976,7 @@ sudo reboot
 | Permanent change      | `sudo hostnamectl set-hostname new-name` | Persists across reboots        |
 | Update hosts file     | Edit `/etc/hosts`                        | Ensures proper name resolution |
 
-```
+```mermaid
 flowchart TD
     U[User] -->|Run hostname command| C[System Command]
     C -->|Temporary Change| T[Kernel updates hostname<br>in memory]
@@ -1087,9 +1087,9 @@ systemctl status mariadb
 ls -l /srv/
 ```
 
-### 🧱  Diagram — Server Setup Workflow
+### 🧱 Diagram — Server Setup Workflow
 
-```
+```mermaid
 flowchart TD
     A[Install OS] --> B[Update System]
     B --> C[Set Hostname]
@@ -1225,7 +1225,7 @@ sudo systemctl restart ssh   # or sshd
 
 ### 🧱 Diagram — How SSH Works
 
-```
+```mermaid
 flowchart TD
     C[Client Machine] -->|SSH request| S[SSH Server]
     S -->|Send public key| C
@@ -1352,9 +1352,9 @@ sudo ufw deny 8080
 sudo ufw reset
 ```
 
-### 🧱  Diagram — How UFW Works
+### 🧱 Diagram — How UFW Works
 
-```
+```mermaid
 flowchart TD
     IN[Incoming Traffic] -->|Check UFW Rules| F[UFW Firewall]
     F -->|Allowed by rules| S[Server]
@@ -1423,7 +1423,7 @@ Run a backup script every day at 2:30 AM:
 
 ### 🧱 Diagram — How Cron Works
 
-```
+```mermaid
 flowchart TD
     S["Cron Daemon (crond)"] -->|Check schedule| C["User Crontab / System Crontab"]
     C -->|"Match current time"| J[Execute Job]
