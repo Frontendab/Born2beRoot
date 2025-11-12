@@ -7,7 +7,7 @@
 The **Born2beRoot** project is about **setting up and configuring a Linux server from scratch**.
 It teaches you how to manage **users, groups, partitions, services, and essential system tools** while understanding **Linux internals**.
 
-Once completed, you’ll have a fully functional server ready to host applications or services —
+Once completed, you’ll have a fully functional server ready to host applications or services
 and you’ll gain a deep understanding of **Linux system administration and server management**.
 
 ## 🧠 Purpose
@@ -46,7 +46,7 @@ flowchart TD
     end
 
     subgraph Hypervisor["Hypervisor"]
-        E[Manages Hardware Resources]
+        E[Manages Hardware<br>Resources]
         E --> F["VM 1 (OS + Apps)"]
         E --> G["VM 2 (OS + Apps)"]
         E --> H["VM 3 (OS + Apps)"]
@@ -406,7 +406,7 @@ There are **two main types** of partitions in traditional **MBR (Master Boot Rec
 
 * A **primary partition** is one of the **main partitions** on a disk.
 * The **MBR partition table supports up to 4 primary partitions** only.
-* One of these primary partitions can be marked as **active (bootable)** — that’s where the operating system usually starts from.
+* One of these primary partitions can be marked as **active (bootable)** that’s where the operating system usually starts from.
 * You **cannot create more than 4 primary partitions** on an MBR disk.
 
 **Example:**
@@ -439,7 +439,7 @@ There are **two main types** of partitions in traditional **MBR (Master Boot Rec
 
 ### 🧠 Modern Note
 
-With modern **GPT (GUID Partition Table)** systems (used by UEFI), the limitation of 4 primary partitions no longer exists —
+With modern **GPT (GUID Partition Table)** systems (used by UEFI), the limitation of 4 primary partitions no longer exists
 you can create **up to 128 partitions** directly, and the concept of “logical” partitions is obsolete.
 
 ```mermaid
