@@ -834,7 +834,7 @@ sudo gpasswd -d ayoub developers
 
 ### 🧱 Diagram — User and Group Relationship
 
-```
+```mermaid
 graph TD
     A[ayoub] --> G1[developers]
     B[other_user] --> G1
