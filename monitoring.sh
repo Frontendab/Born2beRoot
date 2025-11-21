@@ -32,7 +32,7 @@ LVM_USE=$( [ $(lsblk | grep -c lvm) -gt 0 ] && echo "yes" || "no")
 CONNECTIONS_TCP=$(ss -ta | grep -c ESTAB)
 
 # User log
-USER_LOG=$(who -u | awk '{printf $1}'| sort -u | wc -l) 
+USER_LOG=$(who -u | awk '{print $1}'| sort -u | wc -l) 
 
 # Network
 NET_HOST_IP=$(hostname -I)
